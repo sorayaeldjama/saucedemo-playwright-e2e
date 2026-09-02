@@ -1,0 +1,14 @@
+{
+  "name": "ciril-groupe-sauce-demo-e2e",
+  "version": "1.0.0",
+  "description": "Configuratiion de l'espace de travail ! \r - on install node js \r - on initialise playwright avce : init playwright\r - on ajoute l'exotensuin playwright for vs code",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.4.0"
+  }
+}
