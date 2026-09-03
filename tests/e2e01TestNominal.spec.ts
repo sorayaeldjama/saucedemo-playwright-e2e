@@ -6,14 +6,13 @@ test.beforeEach(async ({ page }) => {
   const loginPage = new LoginPage(page); 
   await loginPage.goto(); 
   await loginPage.login('standard_user', 'secret_sauce'); 
+   // On vérifie  qu'on est bien sur la page d'inventaire
+  await expect(page).toHaveURL(/.*inventory.html/);
 });
 
 
 test('E2E-01 : Parcours d\'achat nominal (Happy Path complet)', async ({ page }) => {
   
-  // On vérifie  qu'on est bien sur la page d'inventaire
-  await expect(page).toHaveURL(/.*inventory.html/);
-
   // Navigation dans le catalogue et ajout de 2 articles distincts
   await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
   await page.locator('[data-test="add-to-cart-sauce-labs-bike-light"]').click();
@@ -67,6 +66,29 @@ test('E2E-01 : Parcours d\'achat nominal (Happy Path complet)', async ({ page })
   // Vérification de la page "Checkout: Complete!"
   await expect(page).toHaveURL(/.*checkout-complete.html/);
   await expect(page.locator('.complete-header')).toHaveText('Thank you for your order!');
+
+  // 1. Indiquer à Playwright d'attendre un événement de téléchargement
+  const downloadPromise = page.waitForEvent('download');
+  
+  // 2. Cliquer sur le bouton qui déclenche le PDF (sélecteur fictif pour l'exemple)
+  await page.locator('[data-test="download-invoice"]').click();
+  
+  // 3. Récupérer l'objet de téléchargement
+  const download = await downloadPromise;
+  
+  // 4. Sauvegarder le fichier localement dans votre projet
+  const path = './downloads/facture.pdf';
+  await download.saveAs(path);
+  
+  // 5. Lire le contenu du PDF (nécessite fs et pdf-parse importés en haut du fichier)
+  const dataBuffer = fs.readFileSync(path);
+  const pdfData = await pdf(dataBuffer);
+  
+  // 6. Vérifier que les données de la commande sont bien dans le document
+  expect(pdfData.text).toContain('John Doe');
+  expect(pdfData.text).toContain(expectedTotal.toString()); // Vérifie le total calculé plus haut
+  
+  // =========================================================
 
   // Déconnexion
   await page.getByRole('button', { name: 'Open Menu' }).click();

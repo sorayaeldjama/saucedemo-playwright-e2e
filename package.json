@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "Configuratiion de l'espace de travail ! \r - on install node js \r - on initialise playwright avce : init playwright\r - on ajoute l'exotensuin playwright for vs code",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+  "po-test-chromium": "playwright test tests/votre-nom-de-fichier.spec.ts --project=chromium",
+  "po-test-firefox": "playwright test tests/votre-nom-de-fichier.spec.ts --project=firefox",
+  "po-test-all": "npm run po-test-chromium && npm run po-test-firefox"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
